@@ -10,6 +10,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -42,6 +43,7 @@ import com.google.api.services.calendar.model.Events;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -80,6 +82,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         AppCompatButton testAuth = (AppCompatButton) findViewById(R.id.testAuth);
+        AppCompatButton testContentProvider = (AppCompatButton) findViewById(R.id.button);
+        testContentProvider.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Calendar a = Calendar.getInstance();
+                a.set(2016, 6, 23, 12, 0);
+
+                Calendar b = Calendar.getInstance();
+                b.set(2016, 6, 23, 14, 0);
+
+                Intent asd = new Intent(Intent.ACTION_INSERT)
+                        .setData(CalendarContract.Events.CONTENT_URI)
+                        .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, a.getTimeInMillis())
+                        .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, b.getTimeInMillis())
+                        .putExtra(CalendarContract.Events.TITLE, "Yoga")
+                        .putExtra(CalendarContract.Events.DESCRIPTION, "Group class")
+                        .putExtra(CalendarContract.Events.EVENT_LOCATION, "The gym");
+                startActivity(asd);
+            }
+        });
         testAuth.setOnClickListener(this);
 
         mCredential = GoogleAccountCredential.usingOAuth2(
@@ -287,12 +309,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Event event = new Event()
                     .setSummary("Google I/O 2015")
                     .setDescription("A chance to hear more about Google's developer products.");
-            DateTime startDateTime = new DateTime("2016-07-21T09:00:00+07:00");
+            DateTime startDateTime = new DateTime("2016-07-14T09:00:00+07:00");
             EventDateTime start = new EventDateTime()
                     .setDateTime(startDateTime)
                     .setTimeZone("Asia/Jakarta");
             event.setStart(start);
-            DateTime endDateTime = new DateTime("2016-07-21T10:00:00+07:00");
+            DateTime endDateTime = new DateTime("2016-07-14T10:00:00+07:00");
             EventDateTime end = new EventDateTime()
                     .setDateTime(endDateTime)
                     .setTimeZone("Asia/Jakarta");
@@ -314,6 +336,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 eventStrings.add(event.getDescription());
             } catch (IOException e) {
                 e.printStackTrace();
+                Log.e("tsting", "insertEventData: " + e.getMessage());
+
             }
 
             return eventStrings;
